@@ -1,6 +1,7 @@
-import { Controller, Get, HttpStatus, Param, Res } from '@nestjs/common';
+import { Body, Controller, Get, HttpStatus, Param, Post, Res } from '@nestjs/common';
 import { UserService } from './user.service';
 import { Response } from 'express';
+import { UserDto } from './dto/user.dto';
 
 @Controller('user')
 export class UserController {
@@ -8,15 +9,25 @@ export class UserController {
 
     @Get()
     async handler(@Res() response: Response) {
-        const users = await this.userService.findAll();
+        const users = (await this.userService.findAll()).map((element) => {
+            const { password: _, ...result } = element;
+            return result;
+        });
 
         return response.status(HttpStatus.OK).json(users);
     }
 
     @Get(':email')
     async index(@Param('email') email: string, @Res() response: Response) {
-        const user = await this.userService.findByEmail(email);
+        const { password: _, ...user } = await this.userService.findByEmail(email);
 
         return response.status(HttpStatus.OK).json(user);
+    }
+
+    @Post()
+    async store(@Body() dataBody: UserDto, @Res() response: Response) {
+        const { password: _, ...user } = await this.userService.create(dataBody);
+
+        return response.status(HttpStatus.CREATED).json(user);
     }
 }
