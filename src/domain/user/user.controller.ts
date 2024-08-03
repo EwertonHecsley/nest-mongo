@@ -9,21 +9,24 @@ export class UserController {
 
     @Get()
     async handler(@Res() response: Response) {
-        const users = await this.userService.findAll();
+        const users = (await this.userService.findAll()).map((element) => {
+            const { password: _, ...result } = element;
+            return result;
+        });
 
         return response.status(HttpStatus.OK).json(users);
     }
 
     @Get(':email')
     async index(@Param('email') email: string, @Res() response: Response) {
-        const user = await this.userService.findByEmail(email);
+        const { password: _, ...user } = await this.userService.findByEmail(email);
 
         return response.status(HttpStatus.OK).json(user);
     }
 
     @Post()
     async store(@Body() dataBody: UserDto, @Res() response: Response) {
-        const user = await this.userService.create(dataBody);
+        const { password: _, ...user } = await this.userService.create(dataBody);
 
         return response.status(HttpStatus.CREATED).json(user);
     }
