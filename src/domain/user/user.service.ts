@@ -23,4 +23,11 @@ export class UserService {
 
         return await this.userRepository.create(data);
     }
+
+    async delete(email: string) {
+        const user = await this.userRepository.findByEmail(email);
+        if (!user) throw new HttpException("Email não encontrado.", HttpStatus.NOT_FOUND);
+
+        return await this.userRepository.delete(email);
+    }
 }

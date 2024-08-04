@@ -18,4 +18,7 @@ export class UserRepository {
         return await this.prismaService.user.create({ data });
     }
 
+    async delete(email: string) {
+        return await this.prismaService.user.delete({ where: { email } });
+    }
 }
