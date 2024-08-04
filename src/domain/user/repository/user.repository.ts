@@ -21,4 +21,13 @@ export class UserRepository {
     async delete(email: string) {
         return await this.prismaService.user.delete({ where: { email } });
     }
+
+    async update(email: string, data: UserDto): Promise<UserDto> {
+        return await this.prismaService.user.update({
+            where: {
+                email
+            },
+            data
+        })
+    }
 }
